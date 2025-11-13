@@ -1,24 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LoginForm from './components/LoginForm';
+import Dashboard from './components/Dashboard';
+import MembersPage from './pages/MembersPage';
+import AdminCreateUser from './pages/AdminCreateUser';
 
-function App() {
+function App(){
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const isAdmin = user?.role === 'admin';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+        <Route path="/members" element={user ? <MembersPage /> : <Navigate to="/login" />} />
+        <Route path="/admin/create" element={isAdmin ? <AdminCreateUser /> : <Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to={user ? '/dashboard' : '/login'} />} />
+      </Routes>
+    </Router>
   );
 }
 
